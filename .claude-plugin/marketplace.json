@@ -1,0 +1,13 @@
+{
+  "name": "konte",
+  "owner": {
+    "name": "sshworld"
+  },
+  "plugins": [
+    {
+      "name": "konte",
+      "source": "./",
+      "description": "Sketch a video idea as a storyboard, a rough animatic and per-shot reference clips with prompts for Seedance, Kling or Higgsfield, before paying to generate it."
+    }
+  ]
+}

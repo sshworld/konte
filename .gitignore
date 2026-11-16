@@ -1,0 +1,8 @@
+node_modules/
+out/
+konte-out/
+*.tgz
+*.log
+.env
+.env.*
+.DS_Store

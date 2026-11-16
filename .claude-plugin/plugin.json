@@ -1,0 +1,21 @@
+{
+  "name": "konte",
+  "version": "1.0.0",
+  "description": "Sketch a video idea as a storyboard, a rough animatic and per-shot reference clips with prompts for Seedance, Kling or Higgsfield, before paying to generate it.",
+  "author": {
+    "name": "sshworld"
+  },
+  "license": "MIT",
+  "keywords": [
+    "storyboard",
+    "animatic",
+    "previs",
+    "ai-video",
+    "seedance",
+    "kling",
+    "higgsfield",
+    "reference-video",
+    "video-prompt"
+  ],
+  "repository": "https://github.com/sshworld/konte"
+}

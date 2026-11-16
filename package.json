@@ -1,0 +1,61 @@
+{
+  "name": "konte",
+  "version": "1.0.0",
+  "description": "AI video storyboard and animatic generator: turn a JSON storyboard into a rough previs video, a storyboard image and per-shot reference clips with prompts, meant for video models that take a reference video such as Seedance and Kling, before you pay to generate.",
+  "type": "module",
+  "bin": {
+    "konte": "cli.mjs"
+  },
+  "files": [
+    "cli.mjs",
+    "src",
+    "vendor",
+    "docs",
+    "examples",
+    "skills",
+    ".claude-plugin"
+  ],
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "keywords": [
+    "storyboard",
+    "animatic",
+    "previs",
+    "previsualization",
+    "pre-visualization",
+    "blocking",
+    "shot-list",
+    "ai-video",
+    "text-to-video",
+    "video-to-video",
+    "reference-video",
+    "seedance",
+    "kling",
+    "higgsfield",
+    "veo",
+    "sora",
+    "runway",
+    "video-prompt",
+    "prompt-generator",
+    "claude-code",
+    "claude-code-plugin",
+    "claude-skill",
+    "agent-skill",
+    "threejs",
+    "cli"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sshworld/konte.git"
+  },
+  "homepage": "https://github.com/sshworld/konte#readme",
+  "bugs": {
+    "url": "https://github.com/sshworld/konte/issues"
+  },
+  "author": "sshworld"
+}

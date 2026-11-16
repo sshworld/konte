@@ -1,0 +1,51 @@
+{
+  "konte": 1,
+  "title": "skincare-ad",
+  "logline": "크리에이터가 세럼을 카메라에 들어 보이고, 병이 클로즈업되고, 제품이 혼자 남는 15초 세로 광고.",
+  "aspect": "9:16",
+  "cast": {
+    "creator": { "label": "크리에이터", "color": "#e8457e" },
+    "serum": { "label": "세럼", "kind": "object", "shape": "bottle", "size": [0.09, 0.2, 0.09], "color": "#f5a623" }
+  },
+  "scenes": [
+    {
+      "title": "제품 소개", "seconds": 5,
+      "note": "욕실 거울 앞. 크리에이터가 세럼을 얼굴 옆으로 들어 보이며 카메라를 본다.",
+      "set": [
+        { "kind": "box", "at": [0, -1.4], "size": [3.2, 2.6, 0.12], "label": "거울 벽" },
+        { "kind": "box", "at": [0, -1.0], "size": [2.2, 0.9, 0.55], "label": "세면대" },
+        { "kind": "box", "at": [-1.9, 0.2], "size": [0.12, 2.6, 3.2] }
+      ],
+      "actors": [
+        { "who": "creator", "at": [0, 0], "face": 0, "do": "stand+show" },
+        { "who": "serum", "heldBy": "creator" }
+      ],
+      "camera": { "on": "creator", "size": "MS", "angle": "front", "height": "eye", "move": "handheld" }
+    },
+    {
+      "title": "제품 클로즈업", "seconds": 5,
+      "note": "손에 든 세럼 병 클로즈업. 카메라가 병으로 천천히 다가간다.",
+      "set": [
+        { "kind": "box", "at": [0, -1.4], "size": [3.2, 2.6, 0.12] },
+        { "kind": "box", "at": [0, -1.0], "size": [2.2, 0.9, 0.55] }
+      ],
+      "actors": [
+        { "who": "creator", "at": [0, 0], "face": 0, "do": "stand+show" },
+        { "who": "serum", "heldBy": "creator" }
+      ],
+      "camera": { "on": "serum", "size": "MS", "angle": "front34", "height": "eye", "move": "push", "strength": 0.5, "avoid": false }
+    },
+    {
+      "title": "제품 컷", "seconds": 5,
+      "note": "세면대 위에 놓인 세럼이 천천히 돈다. 뒤에 로고 자리.",
+      "set": [
+        { "kind": "box", "at": [0, 0], "size": [1.6, 0.9, 0.7], "label": "세면대" },
+        { "kind": "box", "at": [0, -1.2], "size": [2.4, 1.6, 0.1], "y": 0.6, "label": "로고", "color": "#4a5263" }
+      ],
+      "actors": [
+        { "who": "serum", "at": [0, 0], "floor": 0.9, "do": "spin", "turns": 0.5 }
+      ],
+      "camera": { "on": "serum", "size": "MS", "angle": "front34", "height": 15, "move": "push", "strength": 0.6 }
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "konte": 1,
+  "title": "cafe",
+  "logline": "카페에서 마주 앉은 두 사람. 한 사람이 테이블 위의 상자를 들고 먼저 일어나 나간다.",
+  "aspect": "16:9",
+  "cast": {
+    "mina": { "label": "미나", "color": "#e8457e" },
+    "joon": { "label": "준", "color": "#3aa0e0" },
+    "box": { "label": "상자", "kind": "object", "shape": "box", "size": [0.22, 0.14, 0.22], "color": "#f5c518" }
+  },
+  "scenes": [
+    {
+      "title": "카페, 오후", "seconds": 6,
+      "note": "창가 자리에 마주 앉은 두 사람. 테이블 위에 작은 상자.",
+      "set": [
+        { "kind": "table", "at": [0, 0], "scale": 0.8 }, { "kind": "chair", "at": [-0.95, 0], "turn": 90 }, { "kind": "chair", "at": [0.95, 0], "turn": -90 },
+        { "kind": "box", "at": [0, -2.2], "size": [9, 3, 0.2], "label": "창" }, { "kind": "table", "at": [3.4, 1.4], "scale": 0.8 }, { "kind": "table", "at": [-3.6, 1.6], "scale": 0.8 }
+      ],
+      "actors": [
+        { "who": "mina", "at": [-0.9, 0], "face": 90, "do": "sit", "look": "joon" },
+        { "who": "joon", "at": [0.9, 0], "face": -90, "do": "sit", "look": "mina" },
+        { "who": "box", "at": [0, 0], "floor": 0.78 }
+      ],
+      "camera": { "on": "box", "size": "WS", "angle": "front", "height": "eye", "move": "push", "strength": 0.4 }
+    },
+    {
+      "title": "미나가 말한다", "seconds": 5,
+      "note": "준의 어깨 너머로 미나. 잠시 망설이다가 입을 연다.",
+      "set": [ { "kind": "table", "at": [0, 0], "scale": 0.8 }, { "kind": "chair", "at": [-0.95, 0], "turn": 90 }, { "kind": "chair", "at": [0.95, 0], "turn": -90 }, { "kind": "box", "at": [0, -2.2], "size": [9, 3, 0.2] } ],
+      "actors": [
+        { "who": "mina", "at": [-0.9, 0], "face": 90, "do": [[0, "sit"], [1.6, "sit+talk"]], "look": "joon" },
+        { "who": "joon", "at": [0.9, 0], "face": -90, "do": "sit", "look": "mina" },
+        { "who": "box", "at": [0, 0], "floor": 0.78 }
+      ],
+      "camera": { "on": "mina", "over": "joon" }
+    },
+    {
+      "title": "준이 듣는다", "seconds": 4,
+      "note": "반대편. 미나의 어깨 너머로 준의 표정.",
+      "set": [ { "kind": "table", "at": [0, 0], "scale": 0.8 }, { "kind": "chair", "at": [-0.95, 0], "turn": 90 }, { "kind": "chair", "at": [0.95, 0], "turn": -90 }, { "kind": "box", "at": [0, -2.2], "size": [9, 3, 0.2] } ],
+      "actors": [
+        { "who": "mina", "at": [-0.9, 0], "face": 90, "do": "sit+talk", "look": "joon" },
+        { "who": "joon", "at": [0.9, 0], "face": -90, "do": "sit", "look": "mina" },
+        { "who": "box", "at": [0, 0], "floor": 0.78 }
+      ],
+      "camera": { "on": "joon", "over": "mina", "side": "left" }
+    },
+    {
+      "title": "미나가 나간다", "seconds": 7,
+      "note": "상자를 안고 있던 미나가 일어나 문으로 걸어간다. 준은 앉은 채로 지켜본다.",
+      "set": [ { "kind": "table", "at": [0, 0], "scale": 0.8 }, { "kind": "chair", "at": [-0.95, 0], "turn": 90 }, { "kind": "chair", "at": [0.95, 0], "turn": -90 }, { "kind": "box", "at": [0, -2.2], "size": [9, 3, 0.2] }, { "kind": "door", "at": [-6, 2.5], "turn": 90, "label": "문" } ],
+      "actors": [
+        { "who": "mina", "path": [[0, -0.9, 0], [1.2, -0.9, 0], [2.2, -1.5, 0.9], [7, -5.0, 2.5]], "do": [[0, "sit"], [1.2, "walk+carry"]] },
+        { "who": "joon", "at": [0.9, 0], "face": -90, "do": "sit", "look": "mina" },
+        { "who": "box", "heldBy": "mina", "at": [0, 0] }
+      ],
+      "camera": { "on": "mina", "size": "FS", "angle": "front34", "height": "eye", "move": "track" }
+    }
+  ]
+}
