@@ -1,5 +1,6 @@
 {
   "name": "konte",
+  "description": "konte: sketch a video idea as a storyboard, a rough animatic and per-shot reference clips before paying to generate it.",
   "owner": {
     "name": "sshworld"
   },
