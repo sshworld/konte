@@ -9,7 +9,7 @@ One JSON file in, one command, no window to open. konte draws a rough previs vid
 스토리보드(콘티) JSON 하나로 러프한 애니매틱 영상, 콘티 보드, 샷별 참고 클립과 프롬프트를 만듭니다. Seedance · Kling · Higgsfield 같은 AI 영상 모델에 돈을 쓰기 전에 연출과 카메라, 타이밍을 먼저 확인하는 도구입니다.
 
 ```
-npx konte render sneaker-ad
+npx github:sshworld/konte render sneaker-ad
 ```
 
 Needs Node 22 or later, Chrome or Chromium, and ffmpeg. `sneaker-ad` is one of four specs that ship with konte; give a path to draw your own.
@@ -50,7 +50,7 @@ konte is a command and a text file. That is its whole point, and its limit.
 ## Install
 
 ```
-npm install -g konte
+npm install -g github:sshworld/konte
 ```
 
 If Chrome is somewhere konte does not look (Windows, a custom install), set `CHROME` to its executable.
