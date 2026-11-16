@@ -154,7 +154,13 @@ try {
   const tabs = [await attach(first)];
   ws = { close: () => { for (const sock of sockets) try { sock.close(); } catch {} } };
   const { send, evaluate, open, grab } = tabs[0];
-  if (!opt.boardOnly) for (let i = 1; i < JOBS; i++) tabs.push(await attach(await (await fetch(`${debug}/json/new?about:blank`, { method: "PUT" })).json()));
+  // Each extra renderer gets a window of its own: a tab behind another tab stops drawing on some systems, and its screenshot never arrives.
+  if (!opt.boardOnly) for (let i = 1; i < JOBS; i++) {
+    const { targetId } = await send("Target.createTarget", { url: "about:blank", newWindow: true });
+    const target = (await (await fetch(`${debug}/json`)).json()).find((t) => t.id === targetId);
+    if (!target) throw new Error("Chrome did not open another window");
+    tabs.push(await attach(target));
+  }
   // Frames go to ffmpeg through a pipe. The video is written beside its final name and renamed only when ffmpeg succeeds,
   // so a failed run never leaves a broken file where a good one is expected.
   const video = async (look, hud, file) => {
