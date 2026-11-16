@@ -1,0 +1,35 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm test
+      - run: npm pack --dry-run
+  render:
+    # draws a bundled example for real: headless Chrome and ffmpeg, the same path a user takes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: node cli.mjs render skincare-ad --look 3d -o out/ci
+      - run: test -s out/ci/board-3d.png && test -s out/ci/sketch-3d.mp4 && test -s out/ci/shots/03-3d.mp4 && test -s out/ci/prompts.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: skincare-ad
+          path: out/ci
