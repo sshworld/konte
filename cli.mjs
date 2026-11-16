@@ -71,6 +71,8 @@ if (!opt.boardOnly && spawnSync("ffmpeg", ["-version"]).status !== 0) die("ffmpe
 const out = resolve(opt.out ?? join("konte-out", safeName(stage.title)));  // a title can never name a folder outside konte-out
 mkdirSync(out, { recursive: true });
 const JOBS = Math.max(1, Math.min(opt.jobs ?? Math.min(6, Math.floor(availableParallelism() / 2)), 12));
+// On a machine with no graphics card (a server, a CI runner) Chrome has to be told it may draw WebGL in software.
+const GL = process.platform === "linux" ? ["--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] : [];
 const T0 = Date.now(), secs = (t) => ((Date.now() - t) / 1000).toFixed(1) + "s";
 
 // The page may fetch exactly these and nothing else.
@@ -102,7 +104,7 @@ try {
   await new Promise((ok, no) => { server.once("error", (e) => no(new Error("could not open a local port: " + e.message))); server.listen(0, "127.0.0.1", ok); });
   const base = `http://127.0.0.1:${server.address().port}`;
   profile = mkdtempSync(join(tmpdir(), "konte-chrome-"));
-  chrome = spawn(CHROME, ["--headless=new", "--remote-debugging-port=0", `--user-data-dir=${profile}`, "--hide-scrollbars", "--no-first-run", "about:blank"], { stdio: ["ignore", "ignore", "pipe"] });
+  chrome = spawn(CHROME, ["--headless=new", "--remote-debugging-port=0", `--user-data-dir=${profile}`, "--hide-scrollbars", "--no-first-run", ...GL, ...(process.env.KONTE_CHROME_FLAGS ?? "").split(/\s+/).filter(Boolean), "about:blank"], { stdio: ["ignore", "ignore", "pipe"] });
   const wsUrl = await new Promise((ok0, no0) => {
     let err = ""; const timer = setTimeout(() => no(new Error("Chrome did not start within 20s")), 20000);
     const ok = (v) => { clearTimeout(timer); ok0(v); }, no = (e) => { clearTimeout(timer); no0(e); };
@@ -120,7 +122,7 @@ try {
     sock.onmessage = (m) => { const d = JSON.parse(m.data); if (d.id && waiting.has(d.id)) { waiting.get(d.id)(d); waiting.delete(d.id); } };
     sock.onclose = () => { for (const f of waiting.values()) f({ error: { message: "Chrome went away" } }); waiting.clear(); };
     const send = (method, params = {}) => new Promise((ok, no) => {
-      const i = ++id, timer = setTimeout(() => { waiting.delete(i); no(new Error(method + " timed out after 30s")); }, 30000);
+      const i = ++id, timer = setTimeout(() => { waiting.delete(i); no(new Error(method + " timed out after 120s")); }, 120000);  // software rendering is slow on its first frame
       waiting.set(i, (d) => { clearTimeout(timer); d.error ? no(new Error(method + ": " + d.error.message)) : ok(d.result); });
       sock.send(JSON.stringify({ id: i, method, params }));
     });
