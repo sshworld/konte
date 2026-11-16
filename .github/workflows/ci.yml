@@ -27,6 +27,8 @@ jobs:
         with:
           node-version: 22
       - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: node cli.mjs render skincare-ad --look 3d --board-only -o out/board
+      - run: node cli.mjs render skincare-ad --look 3d --jobs 1 -o out/one
       - run: node cli.mjs render skincare-ad --look 3d -o out/ci
       - run: test -s out/ci/board-3d.png && test -s out/ci/sketch-3d.mp4 && test -s out/ci/shots/03-3d.mp4 && test -s out/ci/prompts.md
       - uses: actions/upload-artifact@v4

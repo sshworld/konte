@@ -104,7 +104,7 @@ try {
   await new Promise((ok, no) => { server.once("error", (e) => no(new Error("could not open a local port: " + e.message))); server.listen(0, "127.0.0.1", ok); });
   const base = `http://127.0.0.1:${server.address().port}`;
   profile = mkdtempSync(join(tmpdir(), "konte-chrome-"));
-  chrome = spawn(CHROME, ["--headless=new", "--remote-debugging-port=0", `--user-data-dir=${profile}`, "--hide-scrollbars", "--no-first-run", ...GL, ...(process.env.KONTE_CHROME_FLAGS ?? "").split(/\s+/).filter(Boolean), "about:blank"], { stdio: ["ignore", "ignore", "pipe"] });
+  chrome = spawn(CHROME, ["--headless=new", "--remote-debugging-port=0", `--user-data-dir=${profile}`, "--hide-scrollbars", "--no-first-run", "--disable-renderer-backgrounding", "--disable-backgrounding-occluded-windows", "--disable-background-timer-throttling", ...GL, ...(process.env.KONTE_CHROME_FLAGS ?? "").split(/\s+/).filter(Boolean), "about:blank"], { stdio: ["ignore", "ignore", "pipe"] });
   const wsUrl = await new Promise((ok0, no0) => {
     let err = ""; const timer = setTimeout(() => no(new Error("Chrome did not start within 20s")), 20000);
     const ok = (v) => { clearTimeout(timer); ok0(v); }, no = (e) => { clearTimeout(timer); no0(e); };
