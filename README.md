@@ -121,10 +121,10 @@ An explorer, a black sphere hanging in the air, a monolith, and an orbit that sh
 
 ### From animatic to final
 
-The animatic is only the plan. Here it is next to a finished piece built on top of it: the same blocking, timing and camera, rendered with a character, a pudding and a dressed street.
+The animatic is only the plan. Here it is next to a finished piece built on top of it: the same blocking, timing and camera, rendered with a character, a pudding and a meadow road.
 
 <div align="center">
-<img src="media/pudding-ride.gif" width="480" alt="Left: a pink mannequin rides a yellow block down a grey street in the animatic. Right: the same shot finished, a cream bunny riding a pudding down a colourful street">
+<img src="media/pudding-ride.gif" width="480" alt="Left: a pink mannequin rides a yellow block down a grey street in the animatic. Right: the same shot finished, a cream bunny riding a pudding down a road through green hills">
 
 <sub>Left: the konte animatic. Right: a finished 3D render that follows it shot for shot. An 8-second excerpt of a 20-second, 9:16 piece.</sub>
 </div>
