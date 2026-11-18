@@ -1,0 +1,115 @@
+{
+  "konte": 1,
+  "title": "Rooftop Chase",
+  "logline": "A courier with a stolen package, a pursuer one step behind, and a gap between two roofs that only one of them will jump.",
+  "aspect": "9:16",
+  "cast": {
+    "courier": {"label": "Courier", "color": "#ff7a1a", "shoes": "#1b1b20"},
+    "pursuer": {"label": "Pursuer", "color": "#3b4bd8"},
+    "package": {"label": "Package", "kind": "object", "shape": "box", "size": [0.3, 0.22, 0.24], "color": "#c8a26b"}
+  },
+  "scenes": [
+    {
+      "title": "Caught",
+      "seconds": 5,
+      "beats": [0.4, 2.6, 4.6],
+      "note": "The Courier crouches over the package. Behind her, the stairwell door opens and the Pursuer steps out.",
+      "dialogue": [["pursuer", "Hey! That isn't yours."]],
+      "sky": "#f3cfb0",
+      "floor": -9,
+      "set": [
+        {"kind": "box", "at": [0, -4], "size": [14, 9, 24], "y": -9},
+        {"kind": "box", "at": [0, -6.5], "size": [3, 2.6, 2.2], "label": "stairwell"},
+        {"kind": "door", "at": [0, -5.35]},
+        {"kind": "box", "at": [-4.5, -3], "size": [1.6, 1.2, 1.2]},
+        {"kind": "box", "at": [4.5, -6], "size": [1.6, 1.2, 1.2]},
+        {"kind": "box", "at": [-14, -30], "size": [8, 26, 8], "y": -9},
+        {"kind": "box", "at": [8, -36], "size": [9, 34, 9], "y": -9}
+      ],
+      "actors": [
+        {"who": "courier", "at": [0, 0], "face": 0, "floor": 0, "do": [[0, "squat"], [3, "stand+carry"]], "look": "pursuer"},
+        {"who": "package", "heldBy": "courier"},
+        {"who": "pursuer", "floor": 0, "path": [[0, 0, -5.6], [1.6, 0, -5.6], [5, 0, -2.6]], "do": [[0, "stand"], [1.6, "walk+reach"]]}
+      ],
+      "camera": {"on": "courier", "size": "WS", "angle": 20, "height": "eye", "move": "push", "strength": 0.4}
+    },
+    {
+      "title": "Run",
+      "seconds": 6,
+      "note": "Flat out along the roof, the package under her arm. The Pursuer is five metres back and closing.",
+      "sky": "#f3cfb0",
+      "floor": -9,
+      "set": [
+        {"kind": "box", "at": [0, 0], "size": [9, 9, 80], "y": -9},
+        {"kind": "box", "at": [4.7, 0], "size": [0.3, 1.0, 80]},
+        {"kind": "box", "at": [-2.5, -10], "size": [1.6, 1.2, 1.2]},
+        {"kind": "box", "at": [-2.5, 12], "size": [1.6, 1.2, 1.2]},
+        {"kind": "box", "at": [-16, 6], "size": [8, 22, 8], "y": -9},
+        {"kind": "box", "at": [-16, -18], "size": [8, 30, 8], "y": -9}
+      ],
+      "actors": [
+        {"who": "courier", "floor": 0, "path": [[0, 0, -18], [6, 0, 18]], "do": "run+carry"},
+        {"who": "package", "heldBy": "courier"},
+        {"who": "pursuer", "floor": 0, "path": [[0, 0.9, -23.5], [6, 0.9, 13]], "do": "run"}
+      ],
+      "camera": {"on": "courier", "size": "WS", "angle": 15, "height": "eye", "move": "track"}
+    },
+    {
+      "title": "The Gap",
+      "seconds": 6,
+      "beats": [3.0, 3.65, 4.6],
+      "note": "Four metres of nothing between two roofs. She jumps it without slowing down.",
+      "sky": "#d6e4f3",
+      "floor": -9,
+      "set": [
+        {"kind": "box", "at": [0, -19.5], "size": [9, 9, 35], "y": -9},
+        {"kind": "box", "at": [0, 20], "size": [9, 9, 35], "y": -9},
+        {"kind": "box", "at": [-16, 0], "size": [8, 5, 80], "y": -9}
+      ],
+      "actors": [
+        {
+          "who": "courier",
+          "floor": 0,
+          "path": [[0, 0, -22], [3.2, 0, -2.2], [4.1, 0, 2.7], [6, 0, 13]],
+          "do": [[0, "run+carry"], [3.2, "leap"], [4.1, "run+carry"]],
+          "jump": [3.2, 4.1, 1.3]
+        },
+        {"who": "package", "heldBy": "courier"},
+        {"who": "pursuer", "floor": 0, "path": [[0, 0, -33], [6, 0, -8]], "do": "run"}
+      ],
+      "camera": {"on": "courier", "size": "WS", "angle": "side", "height": "high", "move": "track"}
+    },
+    {
+      "title": "The Edge",
+      "seconds": 5,
+      "note": "The Pursuer skids to a stop at the edge. Across the gap, the Courier turns and waves.",
+      "sky": "#d6e4f3",
+      "floor": -9,
+      "set": [{"kind": "box", "at": [0, -19.5], "size": [9, 9, 35], "y": -9}, {"kind": "box", "at": [0, 20], "size": [9, 9, 35], "y": -9}],
+      "actors": [
+        {"who": "pursuer", "floor": 0, "path": [[0, 0, -11], [1.8, 0, -3.2], [5, 0, -3.2]], "do": [[0, "run"], [1.8, "stand"]], "face": 0},
+        {"who": "courier", "floor": 0, "at": [0.6, 7], "face": 180, "do": [[0, "stand+carry"], [2, "wave"]], "look": "pursuer"}
+      ],
+      "camera": {"on": "pursuer", "size": "WS", "angle": 165, "height": "eye", "move": "pan"}
+    },
+    {
+      "title": "Gone",
+      "seconds": 6,
+      "note": "She runs off across the roofs. The camera rises over the city until she is a dot.",
+      "sky": "#d6e4f3",
+      "floor": -9,
+      "set": [
+        {"kind": "box", "at": [0, -19.5], "size": [9, 9, 35], "y": -9},
+        {"kind": "box", "at": [0, 22], "size": [9, 9, 40], "y": -9},
+        {"kind": "box", "at": [-14, 10], "size": [8, 14, 10], "y": -9},
+        {"kind": "box", "at": [13, 28], "size": [8, 20, 8], "y": -9}
+      ],
+      "actors": [
+        {"who": "courier", "floor": 0, "path": [[0, 0.6, 7], [6, 0.6, 36]], "do": "run+carry"},
+        {"who": "package", "heldBy": "courier"},
+        {"who": "pursuer", "floor": 0, "at": [0, -3.2], "face": 0, "do": "stand"}
+      ],
+      "camera": {"on": "courier", "size": "WS", "angle": "back34", "height": "high", "move": "crane-up", "strength": 1}
+    }
+  ]
+}

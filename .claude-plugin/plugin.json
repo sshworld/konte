@@ -1,7 +1,7 @@
 {
   "name": "konte",
   "version": "1.0.1",
-  "description": "Sketch a video idea as a storyboard, a rough animatic and per-shot reference clips with prompts for Seedance, Kling or Higgsfield, before paying to generate it.",
+  "description": "Storyboard a video idea before paying to generate it: a film-style storyboard sheet, a rough animatic with no text on it, and per-shot reference clips with prompts for Seedance, Kling or Higgsfield.",
   "author": {
     "name": "sshworld"
   },

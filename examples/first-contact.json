@@ -1,0 +1,79 @@
+{
+  "konte": 1,
+  "title": "First Contact",
+  "logline": "On a silent planet, an explorer finds a black sphere hanging in the air beside a monolith, and reaches out to touch it.",
+  "aspect": "1:1",
+  "cast": {
+    "explorer": {"label": "Explorer", "color": "#e5484d", "shoes": "#f2f3f5"},
+    "sphere": {"label": "The Sphere", "kind": "object", "shape": "ball", "size": [1.6, 1.6, 1.6], "color": "#15171c"}
+  },
+  "scenes": [
+    {
+      "title": "Arrival",
+      "seconds": 7,
+      "note": "A tiny figure crosses an empty plain towards the only two things on the horizon.",
+      "sky": "#d9c7e6",
+      "ground": "#bca58c",
+      "set": [
+        {"kind": "box", "at": [3, -2], "size": [1.4, 7, 0.45], "color": "#2a2d36", "label": "monolith"},
+        {"kind": "ball", "at": [-9, -6], "size": [3, 1.6, 2.4]},
+        {"kind": "ball", "at": [12, 4], "size": [4, 2.2, 3]},
+        {"kind": "ball", "at": [-16, 14], "size": [5, 2.5, 4]}
+      ],
+      "actors": [{"who": "explorer", "path": [[0, -4, 26], [7, -2.4, 16]], "do": "walk"}, {"who": "sphere", "at": [0, 0], "lift": 1.0, "do": "float"}],
+      "camera": {"on": "explorer", "size": "EWS", "angle": "back", "height": "high", "move": "push", "strength": 0.4}
+    },
+    {
+      "title": "Closer",
+      "seconds": 6,
+      "note": "She slows as she gets near. The sphere looms ahead of her, bigger than it looked.",
+      "sky": "#d9c7e6",
+      "ground": "#bca58c",
+      "set": [{"kind": "box", "at": [3, -2], "size": [1.4, 7, 0.45], "color": "#2a2d36"}],
+      "actors": [
+        {"who": "explorer", "path": [[0, -1.2, 9], [4.5, -0.3, 2.4], [6, -0.3, 2.4]], "do": [[0, "walk"], [4.5, "stand"]]},
+        {"who": "sphere", "at": [0, 0], "lift": 1.0, "do": "float"}
+      ],
+      "camera": {"on": "explorer", "size": "FS", "angle": "back34", "height": "eye", "move": "track"}
+    },
+    {
+      "title": "The Sphere",
+      "seconds": 5,
+      "note": "Looking up at it. Perfectly black, perfectly still, a metre off the ground.",
+      "sky": "#d9c7e6",
+      "ground": "#bca58c",
+      "set": [{"kind": "box", "at": [3, -2], "size": [1.4, 7, 0.45], "color": "#2a2d36"}],
+      "actors": [{"who": "sphere", "at": [0, 0], "lift": 1.0, "do": "float"}],
+      "camera": {"on": "sphere", "size": "MS", "angle": "front", "height": "low", "move": "orbit", "strength": 0.5}
+    },
+    {
+      "title": "Contact",
+      "seconds": 5,
+      "beats": [0.4, 2.2, 4.6],
+      "note": "Her hand comes up, slow. It stops just short of the surface.",
+      "dialogue": [["explorer", "Base, are you seeing this?"]],
+      "sky": "#d9c7e6",
+      "ground": "#bca58c",
+      "set": [{"kind": "box", "at": [3, -2], "size": [1.4, 7, 0.45], "color": "#2a2d36"}],
+      "actors": [
+        {"who": "explorer", "at": [-0.3, 1.6], "face": 180, "do": [[0, "stand"], [1.5, "reach"]]},
+        {"who": "sphere", "at": [0, 0], "lift": 1.0, "do": "float"}
+      ],
+      "camera": {"from": [-3.8, 1.6, 0.8], "to": [-2.9, 1.6, 0.8], "look": [-0.15, 1.55, 0.8], "fov": 45}
+    },
+    {
+      "title": "Scale",
+      "seconds": 8,
+      "note": "The camera circles out and up. One figure, one sphere, one monolith, and nothing else for miles.",
+      "sky": "#d9c7e6",
+      "ground": "#bca58c",
+      "set": [
+        {"kind": "box", "at": [3, -2], "size": [1.4, 7, 0.45], "color": "#2a2d36"},
+        {"kind": "ball", "at": [-9, -6], "size": [3, 1.6, 2.4]},
+        {"kind": "ball", "at": [12, 4], "size": [4, 2.2, 3]}
+      ],
+      "actors": [{"who": "explorer", "at": [-0.3, 1.6], "face": 180, "do": "reach"}, {"who": "sphere", "at": [0, 0], "lift": 1.0, "do": "float"}],
+      "camera": {"on": "explorer", "size": "WS", "angle": "front34", "height": "high", "move": "orbit", "strength": 2, "to": {"size": "EWS"}}
+    }
+  ]
+}

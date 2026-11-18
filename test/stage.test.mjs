@@ -154,12 +154,12 @@ test("every scene owns its frames: no scene is lost and a beat never shows a nei
 
 test("a title cannot name a folder outside the output directory", () => {
   for (const t of ["..", "../../etc", "/abs", ".", "", "a/b", "..\\x"]) { const n = safeName(t); assert.ok(n && !n.startsWith(".") && !/[\\/]/.test(n), `${t} → ${n}`); }
-  assert.equal(safeName("카페, 오후"), "카페-오후");
+  assert.equal(safeName("\uCE74\uD398, \uC624\uD6C4"), "\uCE74\uD398-\uC624\uD6C4");  // a Korean title keeps its letters
 });
 
 test("the CLI exits 0 on a clean spec, 1 on a broken one, and names what is wrong", () => {
   const cli = fileURLToPath(new URL("../cli.mjs", import.meta.url)), run = (...args) => spawnSync(process.execPath, [cli, ...args], { encoding: "utf8" });
-  const ok = run("lint", fileURLToPath(new URL("../examples/cafe.json", import.meta.url)));
+  const ok = run("lint", fileURLToPath(new URL("../examples/high-noon.json", import.meta.url)));
   assert.equal(ok.status, 0); assert.match(ok.stdout, /ok\s*$/);
   assert.equal(run("lint", "/no/such/file.json").status, 1);
   const noValue = run("render", "x.json", "--look"); assert.equal(noValue.status, 1); assert.match(noValue.stderr, /--look needs a value/);
@@ -249,4 +249,31 @@ test("prompts use the length each clip was written at and say they are untested"
   const st = loadSpec({ title: "t", scenes: [{ seconds: 0.5, actors: [] , camera: { from: [0, 1, 5] } }] });
   const text = promptsFor(st, "3d", [{ seconds: 1 }]);
   assert.match(text, /Not yet tested with a video model/); assert.match(text, /Length: 1 seconds/); assert.match(text, /the spec asks for 0\.5s/);
+});
+
+// ── dialogue lives on the board and in the prompts, never in the picture ──────
+test("dialogue reads as a line, pairs or objects, and names the cast member who says it", () => {
+  const cast = { a: { label: "Ann", color: "#e8457e" }, b: {} };
+  const said = (dialogue) => loadSpec({ cast, scenes: [{ seconds: 2, dialogue, actors: [{ who: "a", at: [0, 0] }] }] });
+  assert.deepEqual(said("Go.").scenes[0].dialogue, [{ who: null, speaker: null, color: null, line: "Go." }]);
+  const st = said([["a", "Now?"], { who: "Narrator", line: " Later. " }, { line: "<em>x</em>" }]);
+  assert.deepEqual(st.errors, []);
+  assert.deepEqual(st.scenes[0].dialogue, [
+    { who: "a", speaker: "Ann", color: "#e8457e", line: "Now?" },
+    { who: null, speaker: "Narrator", color: null, line: "Later." },
+    { who: null, speaker: null, color: null, line: "<em>x</em>" }]);
+  assert.deepEqual(said([["\uC900", "\uC548\uB155"]]).scenes[0].dialogue[0], { who: null, speaker: "\uC900", color: null, line: "\uC548\uB155" });
+  for (const bad of [5, { line: "x" }, ["a", "Hello"], [["a"]], [["a", ""]], [{ who: 3, line: "x" }], Array(13).fill(["a", "x"])]) assert.match(said(bad).errors.join(), /dialogue/, JSON.stringify(bad));
+  assert.match(said(["a", "Hello"]).errors.join(), /for a single line write/);
+});
+
+test("both prompts carry the dialogue", () => {
+  const st = loadSpec({ title: "t", cast: { a: { label: "Ann" } }, scenes: [{ seconds: 3, dialogue: [["a", "Run."]], actors: [{ who: "a", at: [0, 0] }] }] });
+  const text = promptsFor(st, "3d", [{ seconds: 3 }]);
+  assert.equal(text.match(/Dialogue: Ann: "Run\."/g).length, 2);
+});
+
+test("the renderer has no way to put a word on the picture", () => {
+  const page = readFileSync(new URL("../src/render.html", import.meta.url), "utf8");
+  for (const bad of [/textContent|innerText|innerHTML|fillText|createElement/, /class="tag"|id="slate"|id="cap"/]) assert.doesNotMatch(page, bad);
 });

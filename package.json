@@ -1,7 +1,7 @@
 {
   "name": "@sshworld/konte",
   "version": "1.0.1",
-  "description": "AI video storyboard and animatic generator: turn a JSON storyboard into a rough previs video, a storyboard image and per-shot reference clips with prompts, meant for video models that take a reference video such as Seedance and Kling, before you pay to generate.",
+  "description": "Storyboard generator for AI video: turn a JSON shot list into a film-style storyboard sheet, a rough animatic and per-shot reference clips with prompts for video models such as Seedance and Kling, before you pay to generate.",
   "type": "module",
   "bin": {
     "konte": "cli.mjs"

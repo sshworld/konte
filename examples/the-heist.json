@@ -1,0 +1,102 @@
+{
+  "konte": 1,
+  "title": "The Heist",
+  "logline": "A museum after hours. One guard, one thief, one golden sun stone on a plinth, and four seconds when nobody is looking.",
+  "aspect": "16:9",
+  "cast": {
+    "thief": {"label": "Thief", "color": "#8f6bff", "shoes": "#1b1b20"},
+    "guard": {"label": "Guard", "color": "#2bd94a"},
+    "stone": {"label": "Sun Stone", "kind": "object", "shape": "ball", "size": [0.3, 0.3, 0.3], "color": "#f5c518"}
+  },
+  "scenes": [
+    {
+      "title": "The Floor Plan",
+      "seconds": 7,
+      "note": "Straight down on the gallery. The Guard walks his round; the Thief waits, crouched behind a pillar.",
+      "sky": "#2a2f3a",
+      "ground": "#8a8f9a",
+      "set": [
+        {"kind": "cyl", "at": [0, 0], "size": [0.8, 1.1, 0.8], "label": "plinth"},
+        {"kind": "box", "at": [0, -7], "size": [18, 4, 0.3]},
+        {"kind": "box", "at": [-9, 0], "size": [0.3, 4, 14]},
+        {"kind": "box", "at": [9, 0], "size": [0.3, 4, 14]},
+        {"kind": "box", "at": [-3.3, -2.3], "size": [0.8, 3.2, 0.8], "label": "pillar"},
+        {"kind": "box", "at": [3.3, -2.3], "size": [0.8, 3.2, 0.8]},
+        {"kind": "box", "at": [-5.5, 4], "size": [1.6, 1, 0.8], "label": "display case"},
+        {"kind": "box", "at": [5.5, 4], "size": [1.6, 1, 0.8]}
+      ],
+      "actors": [
+        {"who": "guard", "path": [[0, -3, 3], [4, 3, 3], [7, 3, -1]], "do": "walk"},
+        {"who": "thief", "at": [-4.1, -1.5], "face": 90, "do": "squat"},
+        {"who": "stone", "at": [0, 0], "floor": 1.1}
+      ],
+      "camera": {"from": [0, 16, 1.5], "look": [0, 0, 0], "fov": 50}
+    },
+    {
+      "title": "Behind His Back",
+      "seconds": 6,
+      "note": "The Guard turns away down the far wall. The Thief rises and slips across the open floor.",
+      "sky": "#2a2f3a",
+      "ground": "#8a8f9a",
+      "set": [
+        {"kind": "cyl", "at": [0, 0], "size": [0.8, 1.1, 0.8]},
+        {"kind": "box", "at": [0, -7], "size": [18, 4, 0.3]},
+        {"kind": "box", "at": [9, 0], "size": [0.3, 4, 14]},
+        {"kind": "box", "at": [-3.3, -2.3], "size": [0.8, 3.2, 0.8]},
+        {"kind": "box", "at": [3.3, -2.3], "size": [0.8, 3.2, 0.8]}
+      ],
+      "actors": [
+        {"who": "thief", "path": [[0, -4.1, -1.5], [1.5, -4.1, -1.5], [6, -1.1, -0.6]], "do": [[0, "squat"], [1.5, "walk"]]},
+        {"who": "guard", "path": [[0, 3, -1], [6, 6.5, -5.5]], "do": "walk"},
+        {"who": "stone", "at": [0, 0], "floor": 1.1}
+      ],
+      "camera": {"on": "thief", "size": "FS", "angle": "back34", "height": "eye", "move": "track"}
+    },
+    {
+      "title": "The Sun Stone",
+      "seconds": 4,
+      "note": "Close on the Sun Stone, hovering over its plinth under a single light. Worth every risk.",
+      "sky": "#2a2f3a",
+      "ground": "#8a8f9a",
+      "set": [{"kind": "cyl", "at": [0, 0], "size": [0.8, 1.1, 0.8]}, {"kind": "box", "at": [0, -7], "size": [18, 4, 0.3]}],
+      "actors": [{"who": "stone", "at": [0, 0], "floor": 1.1, "lift": 0.06, "do": "float"}],
+      "camera": {"on": "stone", "size": "MS", "angle": "front", "height": "low", "move": "push", "strength": 0.5}
+    },
+    {
+      "title": "The Reach",
+      "seconds": 4,
+      "beats": [0.3, 1.8, 3.7],
+      "note": "Her hand closes in on the stone. Across the room, the Guard stops walking.",
+      "sky": "#2a2f3a",
+      "ground": "#8a8f9a",
+      "set": [{"kind": "cyl", "at": [0, 0], "size": [0.8, 1.1, 0.8]}, {"kind": "box", "at": [0, -7], "size": [18, 4, 0.3]}],
+      "actors": [
+        {"who": "thief", "at": [-0.75, 0], "face": 90, "do": [[0, "stand"], [1.2, "reach"]]},
+        {"who": "stone", "at": [0, 0], "floor": 1.1},
+        {"who": "guard", "path": [[0, 6.5, -4.2], [2.5, 6.5, -3.0], [4, 6.5, -3.0]], "do": [[0, "walk"], [2.5, "stand"]], "look": "thief"}
+      ],
+      "camera": {"on": "thief", "size": "MS", "angle": "front34", "side": "left", "height": "eye", "move": "push", "strength": 0.4}
+    },
+    {
+      "title": "Run",
+      "seconds": 6,
+      "note": "Stone in hand, she bolts for the side door. The Guard gives chase, two steps too late.",
+      "dialogue": [["guard", "Stop right there!"]],
+      "sky": "#2a2f3a",
+      "ground": "#8a8f9a",
+      "set": [
+        {"kind": "cyl", "at": [0, 0], "size": [0.8, 1.1, 0.8]},
+        {"kind": "box", "at": [0, -7], "size": [18, 4, 0.3]},
+        {"kind": "box", "at": [-9, 0], "size": [0.3, 4, 14]},
+        {"kind": "door", "at": [-8.8, 4.5], "turn": 90, "label": "side door"}
+      ],
+      "actors": [
+        {"who": "thief", "path": [[0, -0.75, 0], [0.6, -1.2, 0.6], [5, -8.2, 4.5], [6, -8.2, 4.5]], "do": [[0, "run+carry"], [5, "stand+carry"]]},
+        {"who": "stone", "heldBy": "thief"},
+        {"who": "guard", "path": [[0, 6.5, -3], [1.2, 6.5, -3], [6, -2, 2.6]], "do": [[0, "stand"], [1.2, "run"]], "look": "thief"}
+      ],
+      "camera": {"from": [4, 3.4, 7], "look": "thief", "fov": 60},
+      "beats": [0.3, 2.8, 5.4]
+    }
+  ]
+}

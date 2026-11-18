@@ -1,6 +1,6 @@
 {
   "name": "konte",
-  "description": "konte: sketch a video idea as a storyboard, a rough animatic and per-shot reference clips before paying to generate it.",
+  "description": "konte: storyboard a video idea as a film-style board, a rough animatic and per-shot reference clips before paying to generate it.",
   "owner": {
     "name": "sshworld"
   },
@@ -8,7 +8,7 @@
     {
       "name": "konte",
       "source": "./",
-      "description": "Sketch a video idea as a storyboard, a rough animatic and per-shot reference clips with prompts for Seedance, Kling or Higgsfield, before paying to generate it."
+      "description": "Storyboard a video idea before paying to generate it: a film-style storyboard sheet, a rough animatic with no text on it, and per-shot reference clips with prompts for Seedance, Kling or Higgsfield."
     }
   ]
 }

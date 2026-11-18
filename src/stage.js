@@ -146,7 +146,8 @@ function build(spec, errors, err) {
       }
     }
     for (const a of actors) if (a.heldBy && (a.heldBy.kind === "object" || a.heldBy.heldBy)) a.heldBy = null;
-    const scene = { index: si, title: String(s.title ?? `Scene ${si + 1}`), note: String(s.note ?? ""), seconds, start, floor, sky: colour(s.sky) ? s.sky : undefined, ground: colour(s.ground) ? s.ground : undefined, set, blocks, actors, cameraSpec: s.camera == null ? {} : s.camera };
+    const dialogue = dialogueOf(s.dialogue, cast, (m) => err(`${tag}: ${m}`));
+    const scene = { index: si, title: String(s.title ?? `Scene ${si + 1}`), note: String(s.note ?? ""), dialogue, seconds, start, floor, sky: colour(s.sky) ? s.sky : undefined, ground: colour(s.ground) ? s.ground : undefined, set, blocks, actors, cameraSpec: s.camera == null ? {} : s.camera };
     start += seconds;
     if (!isObj(scene.cameraSpec)) { err(`${tag}: "camera" must be an object`); scene.cameraSpec = {}; }
     // the camera is only solved for a scene that read cleanly, so a bad value never reaches the maths
@@ -156,6 +157,24 @@ function build(spec, errors, err) {
     return scene;
   });
   return { title: String(spec.title ?? "untitled"), logline: String(spec.logline ?? ""), width: W, height: H, aspect: W / H, fps: num(spec.fps) ? spec.fps : 12, cast, scenes, seconds: start, errors };
+}
+// Spoken lines for the board and the prompts, never for the picture. "dialogue" is one line as a string, or a list of
+// ["who", "line"] pairs or {"who", "line"} objects. "who" is a cast id (the board shows that member's label and colour)
+// or any other name, kept as written; {"line"} alone is a line with no speaker.
+function dialogueOf(d, cast, err) {
+  if (d == null) return [];
+  const shape = 'must be one line as a string, or a list like [["who", "line"], ...]';
+  const items = typeof d === "string" ? [[null, d]] : Array.isArray(d) ? d : (err(`"dialogue" ${shape}`), []);
+  if (items.length > 12) err(`"dialogue" has ${items.length} lines; a shot holds up to 12`);
+  return items.slice(0, 12).map((it, i) => {
+    const [who, line] = Array.isArray(it) && it.length === 2 ? it : isObj(it) ? [it.who ?? null, it.line] : [undefined, undefined];
+    if (typeof line !== "string" || !line.trim() || (who != null && typeof who !== "string")) {
+      err(`dialogue[${i}] must be ["who", "line"] or {"who": "...", "line": "..."} with text in the line${typeof it === "string" ? ` (for a single line write "dialogue": [["who", "line"]], or just the line as a string)` : ""}`);
+      return null;
+    }
+    const c = who != null && has(cast, who) ? cast[who] : null;
+    return { who: c ? c.id : null, speaker: c ? c.label : who ?? null, color: c?.color ?? null, line: line.trim() };
+  }).filter(Boolean);
 }
 // The moments a board should show when the spec does not name them: the opening, the event, the end.
 // The event is a jump's high point, else the instant two people pass closest, else just after a change of action.
@@ -354,9 +373,10 @@ function solveCamera(scene, aspect, err) {
   const score = (shift) => sightOf(scene, (t) => at(t, shift), subject).score;
   let best = 0, bestScore = score(0);
   if (bestScore < 0.85 && c.avoid !== false) for (const s of [-2 * start.az, 30, -30, 60, -60, 90, -90, 135, -135, 180]) { const v = score(s); if (v > bestScore + 0.05) { best = s; bestScore = v; if (v >= 0.85) break; } }
+  // "moved" is reported the short way round: a swing of -290° is one of 70°
   const angleName = typeof (c.angle ?? "front34") === "number" ? c.angle + "°" : c.angle ?? "front34", heightName = c.height ?? "eye";
   const long = `${SIZE_NAMES[sizeKey]}${c.part ? " on the " + c.part : ""}, ${typeof heightName === "number" ? heightName + "° up" : HEIGHT_NAMES[heightName]}, ${ANGLE_NAMES[angleName] ?? angleName}, ${MOVE_NAMES[moveKey]}${c.to?.size ? " to " + SIZE_NAMES[c.to.size] : ""}`;
-  return { desc: `${sizeKey} · ${angleName} · ${heightName} · ${moveKey}`, long, at: (t) => at(t, best), subject: subject.who, size: sizeKey, move: moveKey, moved: best, visible: bestScore, dark: sightOf(scene, (t) => at(t, best), subject).dark };
+  return { desc: `${sizeKey} · ${angleName} · ${heightName} · ${moveKey}`, long, at: (t) => at(t, best), subject: subject.who, size: sizeKey, move: moveKey, moved: ((best % 360) + 540) % 360 - 180, visible: bestScore, dark: sightOf(scene, (t) => at(t, best), subject).dark };
 }
 
 // ── lint: problems found without drawing a frame ───────────────────────────
@@ -399,7 +419,7 @@ export function lint(stage) {
     }
     if (sec > 30) add("info", sc, `${sec}s is longer than the 30s Kling 4.0 documents for a reference clip; split it if you plan to use the clip that way`);
     else if (sec > 15) add("info", sc, `${sec}s is longer than the 15s of reference video Seedance 2.0 documents`);
-    if (sc.note.length > 90) add("warn", sc, `note is ${sc.note.length} characters; a board caption reads best under 90`);
+    if (sc.note.length > 160) add("warn", sc, `note is ${sc.note.length} characters; a board caption reads best under 160`);
   }
   if (stage.seconds > 180) out.push({ level: "warn", scene: 0, msg: `total length ${stage.seconds}s: a sketch reads best under 3 minutes` });
   return out;

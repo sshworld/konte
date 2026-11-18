@@ -3,41 +3,30 @@
 <title>konte</title>
 <style>
   html, body { margin: 0; overflow: hidden; background: #111; }
-  #stage { position: relative; overflow: hidden; font: 600 11px/1 "Helvetica Neue", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif; }
   #pic { position: relative; overflow: hidden; }
   #pic canvas { display: block; }
-  #slate { height: 26px; box-sizing: border-box; padding: 0 9px; display: flex; align-items: center; gap: 8px; white-space: nowrap; overflow: hidden; }
-  #slate b { font-weight: 800; } #slate .sp { flex: 1; } #slate .dim { opacity: 0.62; font-weight: 500; }
-  #cap { box-sizing: border-box; padding: 7px 9px 9px; font-weight: 500; font-size: 12px; line-height: 1.35; min-height: 46px; }
-  .tag { position: absolute; transform: translate(-50%, -100%); font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 3px; white-space: nowrap; color: #fff; }
-  .l3d #slate, .l3d #cap { background: #17181c; color: #f2f3f5; }
-  .l2d { background: #f4f0e6; } .l2d #slate, .l2d #cap { background: #f4f0e6; color: #1b1b20; }
-  .l2d #slate { border-bottom: 1.5px solid #1b1b20; } .l2d #cap { border-top: 1.5px solid #1b1b20; }
-  .l2d .tag { color: #1b1b20; background: #f4f0e6 !important; border: 1px solid #1b1b20; }
 </style>
-<div id="stage"><div id="slate"></div><div id="pic"></div><div id="cap"></div></div>
+<div id="pic"></div>
 <script type="importmap">{ "imports": { "three": "../vendor/three.module.js" } }</script>
 <script type="module">
 // Draws a stage (src/stage.js) frame by frame. One staging, two looks:
 //   look=3d  lit greybox, one colour per cast member
 //   look=2d  flat three-tone fills with even ink lines on paper
-// hud=review adds a slate strip outside the picture, name tags and travel lines; hud=clean is the picture alone.
+// Nothing here ever draws a word. Titles, notes, camera directions and dialogue live on the board, never in the picture.
+// hud=review adds travel lines on the floor (where each actor goes in the shot); hud=clean is the picture alone.
 import * as THREE from "three";
-import { loadSpec, lint, actorAt, blocked, frameRanges, frameOfBeat } from "./stage.js";
+import { loadSpec, lint, actorAt, frameRanges, frameOfBeat } from "./stage.js";
 import { poseOf } from "./pose.js";
 import { cameraWords } from "./prompts.js";
 
 const q = new URLSearchParams(location.search);
-const LOOK = q.get("look") ?? "3d", TWO = LOOK === "2d", REVIEW = (q.get("hud") ?? "review") === "review", CAPTIONS = q.get("captions") === "1";
+const LOOK = q.get("look") ?? "3d", TWO = LOOK === "2d", REVIEW = (q.get("hud") ?? "review") === "review";
 const spec = await (await fetch(q.get("spec"))).json();
 const stage = loadSpec(spec);
 if (stage.errors.length) { window.KONTE = { ready: true, run: q.get("run"), errors: stage.errors }; throw new Error(stage.errors.join("\n")); }
 const W = stage.width, H = stage.height, FPS = Number(q.get("fps") ?? stage.fps);
-const root = document.getElementById("stage"), pic = document.getElementById("pic"), slate = document.getElementById("slate"), cap = document.getElementById("cap");
-root.className = TWO ? "l2d" : "l3d"; root.style.width = W + "px"; pic.style.width = W + "px"; pic.style.height = H + "px";
-if (!REVIEW) slate.remove(); if (!REVIEW || !CAPTIONS) cap.remove();
-const OUT_H = H + (REVIEW ? 26 : 0) + (REVIEW && CAPTIONS ? 46 : 0);
-root.style.height = OUT_H + "px";
+const pic = document.getElementById("pic");
+pic.style.width = W + "px"; pic.style.height = H + "px";
 
 const INK = new THREE.Color(0x1b1b20), PAPER = new THREE.Color(0xf4f0e6);
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
@@ -159,7 +148,6 @@ function buildScene(sc) {
     const geo = new THREE.BufferGeometry(); geo.setAttribute("position", new THREE.Float32BufferAttribute(pts, 3));
     marks = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0xa9a394 })); marks.position.y = sc.floor + 0.01; scene.add(marks);
   } else { const grid = new THREE.GridHelper(160, 80, 0xb4bac4, 0xc3c8d0); grid.position.y = sc.floor + 0.01; scene.add(grid); }
-  const tags = [];
   for (const p of sc.set) {
     const g = G(scene, p.at[0], p.y, p.at[1]); g.rotation.y = p.turn; let top = 0;
     for (const [shape, sz, o] of p.pieces) {
@@ -168,7 +156,6 @@ function buildScene(sc) {
       if (shape === "ball") m.scale.set(sz[0], sz[1], sz[2]); if (shape === "cyl" && o[3] !== "x") m.scale.z = sz[2] / sz[0]; if (o[3] === "x") m.rotation.z = Math.PI / 2;
       top = Math.max(top, o[1] + sz[1]);
     }
-    if (p.label) tags.push({ obj: g, up: top + 0.12, text: p.label, color: "#5c626d" });
   }
   const actors = sc.actors.map((a) => {
     const rig = a.kind === "object" ? thing(a) : person(a); scene.add(rig.g);
@@ -186,22 +173,18 @@ function buildScene(sc) {
       const geo = new THREE.BufferGeometry(); geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3)); geo.setIndex(idx);
       scene.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: TWO ? INK : new THREE.Color(a.color), transparent: true, opacity: TWO ? 0.55 : 0.6, side: THREE.DoubleSide })));
     }
-    tags.push({ obj: rig.g, up: rig.top, text: a.label, color: a.color, actor: a });
     return { a, rig, blob };
   });
-  if (REVIEW) for (const t of tags) { t.el = document.createElement("div"); t.el.className = "tag"; t.el.textContent = t.text; t.el.style.background = t.color; t.el.style.display = "none"; pic.appendChild(t.el); }
-  return { sc, scene, actors, tags, sun, marks };
+  return { sc, scene, actors, sun, marks };
 }
 
 const built = stage.scenes.map(buildScene), v = new THREE.Vector3();
-const slateParts = [["b", ""], ["span", ""], ["span", "dim"], ["span", "sp"], ["span", "dim"]].map(([el, cls]) => { const e = document.createElement(el); e.className = cls; slate.appendChild(e); return e; });
-const mmss = (s) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 const frameOfBeatIn = (s, bt) => frameOfBeat(RANGES[s.index], bt, FPS);
 const RANGES = frameRanges(stage, FPS), FRAMES = RANGES.at(-1).last + 1;
 function setFrame(f) {
   f = Math.max(0, Math.min(FRAMES - 1, Math.round(f)));
   let i = RANGES.length - 1; while (i > 0 && f < RANGES[i].first) i--;  // the scene is chosen by frame number, never by comparing clock times
-  const B = built[i], sc = B.sc, t = Math.min(sc.seconds, (f - RANGES[i].first) / FPS), time = sc.start + t;
+  const B = built[i], sc = B.sc, t = Math.min(sc.seconds, (f - RANGES[i].first) / FPS);
   for (const { a, rig, blob } of B.actors) {
     const st = actorAt(a, t, sc.seconds);
     rig.g.position.set(...st.pos); rig.g.rotation.y = st.face; rig.apply(st, sc.seconds);
@@ -212,19 +195,9 @@ function setFrame(f) {
   if (B.marks) B.marks.position.set(Math.round(c.look[0] / 2) * 2, sc.floor + 0.01, Math.round(c.look[2] / 2) * 2);  // the floor marks stay near the action, fixed to the world grid
   if (!TWO) { B.sun.target.position.set(c.look[0], sc.floor, c.look[2]); B.sun.position.set(c.look[0] + 5, sc.floor + 11, c.look[2] + 6); B.sun.target.updateMatrixWorld(); }
   renderer.render(B.scene, camera);
-  if (REVIEW) {
-    for (const b of built) for (const tg of b.tags) {
-      if (b !== B) { tg.el.style.display = "none"; continue; }
-      tg.obj.getWorldPosition(v); v.y += tg.up; const w = [v.x, v.y - 0.25, v.z]; v.project(camera);
-      const on = v.z < 1 && Math.abs(v.x) < 0.96 && v.y > -0.96 && v.y < 0.9 && !blocked(sc, c.pos, w);
-      tg.el.style.display = on ? "block" : "none"; tg.el.style.left = ((v.x + 1) / 2 * W) + "px"; tg.el.style.top = ((1 - v.y) / 2 * H) + "px";
-    }
-    slateParts[0].textContent = `${i + 1}/${built.length}`; slateParts[1].textContent = sc.title; slateParts[2].textContent = sc.camera.desc; slateParts[4].textContent = `${mmss(time)} / ${mmss(stage.seconds)}`;  // text nodes only: a title is never markup
-    if (CAPTIONS) cap.textContent = sc.note;
-  }
 }
 window.setFrame = setFrame;
-window.KONTE = { ready: true, run: q.get("run"), errors: [], fps: FPS, frames: FRAMES, ranges: RANGES, width: W, height: OUT_H, title: stage.title, lint: lint(stage),
+window.KONTE = { ready: true, run: q.get("run"), errors: [], fps: FPS, frames: FRAMES, ranges: RANGES, width: W, height: H, title: stage.title, lint: lint(stage),
   scenes: stage.scenes.map((s) => ({ title: s.title, note: s.note, start: s.start, seconds: s.seconds, camera: s.camera.desc, cameraLong: cameraWords(s), beats: s.beats, frames: s.beats.map((bt) => frameOfBeatIn(s, bt)) })) };
 setFrame(0);
 if (!location.hash.startsWith("#capture")) { const t0 = performance.now(); const loop = (now) => { setFrame(Math.floor(((now - t0) / 1000) * FPS) % FRAMES); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }

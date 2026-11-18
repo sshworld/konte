@@ -1,6 +1,8 @@
 # The konte spec
 
-A spec is one JSON file: who is in the story, and a list of scenes. Each scene says where everyone stands or moves, what the set is, and how the camera frames it. `konte lint` checks it; `konte render` draws it.
+A spec is one JSON file: who is in the story, and a list of scenes. Each scene is one shot: where everyone stands or moves, what the set is, how the camera frames it, and the words that go with it (a note and, if you like, dialogue). `konte lint` checks it; `konte render` draws it.
+
+**Words never go in the picture.** Titles, notes, dialogue, camera directions and cast names are written on the storyboard sheet (`board-<look>.png`) and in `prompts.md`. The animatic, the shot clips and the review copy are pictures only.
 
 ## Units and directions
 
@@ -14,7 +16,7 @@ A spec is one JSON file: who is in the story, and a list of scenes. Each scene s
 ```json
 {
   "konte": 1,
-  "title": "sneaker-ad",
+  "title": "Rooftop Chase",
   "logline": "One sentence about the whole piece.",
   "aspect": "9:16",
   "fps": 12,
@@ -36,14 +38,14 @@ Numbers must be finite and positions within 100 km of the origin. A mistake in t
 
 ```json
 "cast": {
-  "runner": { "label": "Runner", "color": "#e8457e", "shoes": "#f5c518" },
-  "shoe":   { "label": "Shoe", "kind": "object", "shape": "shoe", "size": [0.34, 0.3, 0.9] }
+  "courier": { "label": "Courier", "color": "#ff7a1a", "shoes": "#1b1b20" },
+  "package": { "label": "Package", "kind": "object", "shape": "box", "size": [0.3, 0.22, 0.24] }
 }
 ```
 
 | Key | Meaning |
 |---|---|
-| `label` | The name shown on tags and in `shots.json` |
+| `label` | The name on the board (cast legend, "In shot", dialogue), in the prompts and in `shots.json`. Any language works. |
 | `kind` | `person` (default) or `object` |
 | `color` | A hex colour (`#e8457e` or `#e47`). One colour per cast member is how they stay recognisable across cuts. |
 | `height` | Person only, 0.3 to 4 metres |
@@ -54,20 +56,22 @@ Numbers must be finite and positions within 100 km of the origin. A mistake in t
 
 ```json
 {
-  "title": "Alley sprint",
-  "seconds": 16,
-  "note": "What happens, in one sentence. This is the caption on the board.",
+  "title": "The Gap",
+  "seconds": 6,
+  "note": "What happens, in a sentence or two. This is the Action line on the board.",
+  "dialogue": [["courier", "Not today."]],
   "set": [ ],
   "actors": [ ],
   "camera": { },
-  "beats": [1, 9.3, 15]
+  "beats": [3.0, 3.65, 4.6]
 }
 ```
 
 | Key | Meaning |
 |---|---|
 | `seconds` | Length of the scene, 0.5 to 600 |
-| `note` | Shown under the scene on the board and used as the scene line of its prompt. It is never drawn on the sketch video. |
+| `note` | The **Action** line under the shot on the board, and the scene line of its prompts. Never drawn on any video. |
+| `dialogue` | Spoken lines for the **Dialogue** row on the board and a `Dialogue:` line in both prompts. One line as a string (`"Go."`), or a list of `["who", "line"]` pairs or `{"who": "...", "line": "..."}` objects, up to 12. `who` is a cast id (the board shows that member's label and colour) or any other name, kept as written; leave it out for a line with no speaker. Never drawn on any video. |
 | `floor` | Height of the ground, default 0. Use a negative floor with tall set pieces for rooftops. |
 | `sky`, `ground` | Colours for the 3d look |
 | `beats` | 1 to 4 times inside the scene that the board shows. Leave it out and konte picks the opening, the event (the top of a jump, the moment two people pass, or just after a change of action) and the end. |
@@ -82,7 +86,7 @@ Each piece is `{ "kind", "at": [x, z] }` plus:
 | `scale` | 0.05 to 50. Widens a ready-made piece. Trees, lamps, doors and cars also grow taller; tables and chairs keep their real height. |
 | `turn` | Rotation about the vertical axis |
 | `y` | Height of the piece's base, default the scene's floor |
-| `label` | A tag in the review video |
+| `label` | A name for your own reference in the spec. It is not drawn anywhere. |
 | `color` | Override the grey |
 
 Set pieces are solid. A camera described by size and angle looks for a clear view round them, and lint reports an actor who walks through one. Each piece is treated as a box on the world axes, so a wall turned 45° blocks a little more than it draws.
@@ -166,24 +170,28 @@ When you need an exact position:
 `konte lint spec.json` reads the spec, solves every camera and reports problems without drawing a frame. It samples each scene about four times a second on the same staging model the renderer draws, with people and set pieces simplified to boxes. It catches staging mistakes; it does not replace looking at the board.
 
 - **error**: the picture would be wrong. The camera is inside a set piece or passes through an actor, the subject is hidden from every angle, or out of frame for most of a moving shot. `konte render` still writes its files but exits with status 1.
-- **warn**: it will look odd. Someone slides while standing, runs faster than a sprinter, leaps without a jump, walks through a set piece, outgrows the frame, has their head cut off in a medium or wider shot, is completely hidden for a second or more, the camera dips under the floor, or a note is too long for a caption.
+- **warn**: it will look odd. Someone slides while standing, runs faster than a sprinter, leaps without a jump, walks through a set piece, outgrows the frame, has their head cut off in a medium or wider shot, is completely hidden for a second or more, the camera dips under the floor, or a note is too long for the board (over 160 characters).
 - **info**: konte changed something to keep the shot working, such as swinging the camera round a wall, or something worth knowing, such as a scene longer than the reference clip a video model accepts (Seedance 2.0 documents 15 seconds of reference video in total, Kling 4.0 up to 30 seconds per clip).
 
 ## What comes out
 
 | File | What it is |
 |---|---|
-| `board-<look>.png` | The storyboard: each scene's beats with times, the camera in words, the note, and the lint report |
+| `board-<look>.png` | The storyboard sheet, laid out like a film storyboard: title, logline, runtime and a cast legend with each colour; then one card per shot with up to four numbered panels (1A, 1B, ...) and their timecodes, and Camera, Action, Dialogue and In shot rows under them; the lint report at the foot. This is the only output with words on it. |
 | `sketch-<look>.mp4` | The animatic: the picture alone, with no words on it |
 | `shots/NN-<look>.mp4` | One clip per scene, cut from the sketch on exact frames, meant as a reference video for a video model |
 | `shots/NN-<look>-first.png`, `-last.png` | The first and last frame of each scene, for models that start from an image |
 | `prompts.md` | Two prompts per shot: one for use with the clip as a reference video, one that describes the action in words for image-to-video models |
-| `review-<look>.mp4` | With `--review`: the animatic with a slate strip above the picture, name tags and travel lines. `--captions` adds each scene's note under it. |
-| `shots.json` | Scene list for scripts: start, `seconds` as asked and `clipSeconds` as written, frame range, note, camera (short and in words), beats and cast. `fps` is the rate frames were drawn at and `videoFps` the rate of the mp4. `files` lists everything this render wrote. `picture` is the size of the sketch. |
+| `review-<look>.mp4` | With `--review`: the animatic with a line on the floor for where each actor travels in the shot. Still no words. (`--captions` from earlier versions is accepted and draws this same review copy.) |
+| `shots.json` | Scene list for scripts: start, `seconds` as asked and `clipSeconds` as written, frame range, note, dialogue, camera (short and in words), beats and cast. `fps` is the rate frames were drawn at and `videoFps` the rate of the mp4. `files` lists everything this render wrote. `picture` is the size of the sketch. |
 
 A render replaces what konte wrote in that folder before: files from an earlier render that this one did not write again (a fourth clip after the spec dropped to three scenes, the other look) are removed, so an old clip cannot be mistaken for a current one. konte only removes files that the earlier render listed in its own `shots.json`; anything else in the folder, and anything behind a link, is left alone. `--board-only` writes the board and nothing else, and says so if older files are beside it.
 
 A scene's length is rounded to whole frames. At the default 12 frames a second that is invisible; at very low rates konte prints how long each clip really is and `prompts.md` uses that length. In the mp4 each drawn frame is held for a whole number of video frames, giving at least 24 frames a second.
+
+Board timecodes are video time: each shot's range and each panel's time are read from the frames that were really drawn, so they match the mp4 even when a scene was rounded to whole frames.
+
+Board text in any script needs a font for it on the machine that renders. macOS and Windows have them; on Linux, install one (for Korean, Japanese or Chinese, `fonts-noto-cjk`).
 
 The camera line on the board and in the prompts is measured from the camera konte solved, so if it swung round a wall the words say where it ended up.
 

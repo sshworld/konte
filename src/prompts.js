@@ -120,6 +120,9 @@ export function cameraWords(scene) {
   return parts.join(", ");
 }
 
+// The scene's spoken lines as one prompt line: Dialogue: Ann: "Go." Ben: "Now?"
+export const dialogueLine = (sc) => (sc.dialogue?.length ? `Dialogue: ${sc.dialogue.map((d) => (d.speaker ? `${d.speaker}: ` : "") + JSON.stringify(d.line)).join(" ")}` : "");
+
 // Prompts per shot, to paste next to the shot's clip or still in a video model. `shots` carries the length each clip was really written at.
 export function promptsFor(stage, look, shots) {
   const lines = [`# ${stage.title}: prompts per shot`, "",
@@ -133,7 +136,7 @@ export function promptsFor(stage, look, shots) {
     "- Names and limits differ between platforms and versions. If your platform labels the reference differently, replace `@Video1` with its label.", ""];
   stage.scenes.forEach((sc, i) => {
     const nn = String(i + 1).padStart(2, "0"), names = colourNames(sc, stage.aspect), who = sc.actors.map((a, k) => `the ${names[k]} ${a.kind === "object" ? "object" : "figure"} is ${a.label}`), acts = actionsOf(sc, stage.aspect);
-    const len = shots?.[i]?.seconds ?? sc.seconds, lenText = String(+len.toFixed(2)), camera = cameraWords(sc);
+    const len = shots?.[i]?.seconds ?? sc.seconds, lenText = String(+len.toFixed(2)), camera = cameraWords(sc), said = dialogueLine(sc);
     lines.push(`## Shot ${i + 1}: ${sc.title} (${lenText}s)`, "", `Files: \`shots/${nn}-${look}.mp4\`, \`shots/${nn}-${look}-first.png\`, \`shots/${nn}-${look}-last.png\``, "");
     if (Math.abs(len - sc.seconds) > 0.011) lines.push(`Note: the spec asks for ${+sc.seconds.toFixed(2)}s; at this frame rate the clip is ${lenText}s. Times in the action line are the spec's.`, "");
     if (len > 15) lines.push(`Note: this shot is ${lenText}s. Seedance 2.0 documents 15s of reference video in total${len > 30 ? " and Kling 4.0 30s" : ""}.`, "");
@@ -141,9 +144,9 @@ export function promptsFor(stage, look, shots) {
     if (sc.camera.moved) lines.push(`Note: the camera was swung ${Math.abs(sc.camera.moved)}° from the angle the spec asks for, because the set hid the subject. The camera line below describes where it ended up.`, "");
     lines.push("**A. With the clip as a reference video**", "", "```",
       "Refer to @Video1 for camera movement, pacing, shot size, subject path and blocking only. Replace the grey blocks and plain mannequins with a finished, realistic scene.",
-      `Scene: ${sc.note || sc.title}`, `Camera: ${camera}.`, ...(who.length ? [`In the reference, ${who.join("; ")}.`] : []), "```", "",
+      `Scene: ${sc.note || sc.title}`, `Camera: ${camera}.`, ...(who.length ? [`In the reference, ${who.join("; ")}.`] : []), ...(said ? [said] : []), "```", "",
       "**B. From a first frame, with no reference video**", "", "```",
-      `Scene: ${sc.note || sc.title}`, ...(acts.length ? [`Action: ${acts.join(". ")}.`] : []), `Camera: ${camera}.`, `Length: ${lenText} seconds, one continuous shot.`, "```", "");
+      `Scene: ${sc.note || sc.title}`, ...(acts.length ? [`Action: ${acts.join(". ")}.`] : []), `Camera: ${camera}.`, ...(said ? [said] : []), `Length: ${lenText} seconds, one continuous shot.`, "```", "");
   });
   return lines.join("\n");
 }

@@ -1,0 +1,117 @@
+{
+  "konte": 1,
+  "title": "High Noon",
+  "logline": "A stranger walks into a dead town at noon. The marshal is waiting. Only one of them walks out.",
+  "aspect": "16:9",
+  "cast": {
+    "stranger": {"label": "The Stranger", "color": "#e8457e"},
+    "marshal": {"label": "The Marshal", "color": "#3aa0e0"},
+    "weed": {"label": "Tumbleweed", "kind": "object", "shape": "ball", "size": [0.7, 0.6, 0.7], "color": "#b08a4a"}
+  },
+  "scenes": [
+    {
+      "title": "Main Street",
+      "seconds": 7,
+      "note": "Wide on the empty street. The Stranger walks in from the far end as a tumbleweed rolls across.",
+      "sky": "#f2dcb5",
+      "ground": "#d9c29a",
+      "set": [
+        {"kind": "box", "at": [-7, -4], "size": [5, 6, 9], "label": "saloon"},
+        {"kind": "box", "at": [-7, 8], "size": [5, 4.5, 9]},
+        {"kind": "box", "at": [-7, 20], "size": [5, 7, 10]},
+        {"kind": "box", "at": [7, -6], "size": [5, 5, 10], "label": "bank"},
+        {"kind": "box", "at": [7, 7], "size": [5, 6.5, 9]},
+        {"kind": "box", "at": [7, 19], "size": [5, 4, 10]},
+        {"kind": "cyl", "at": [11, 30], "size": [3, 3, 3], "y": 7, "label": "water tower"},
+        {"kind": "box", "at": [11, 30], "size": [2.4, 7, 2.4]}
+      ],
+      "actors": [
+        {"who": "stranger", "path": [[0, 0, 30], [7, 0, 21]], "do": "walk"},
+        {"who": "marshal", "at": [0, -5], "face": 180, "do": "stand"},
+        {"who": "weed", "path": [[0, 4.2, 14], [7, -4.2, 10]], "do": "spin", "turns": 4}
+      ],
+      "camera": {"on": "stranger", "size": "EWS", "angle": "back", "height": 14, "move": "push", "strength": 0.5}
+    },
+    {
+      "title": "The Marshal",
+      "seconds": 5,
+      "note": "Low and close on the Marshal, waiting in the shade. He has seen this before.",
+      "dialogue": [["marshal", "That's far enough."]],
+      "sky": "#f2dcb5",
+      "ground": "#d9c29a",
+      "set": [{"kind": "box", "at": [-7, -4], "size": [5, 6, 9]}, {"kind": "box", "at": [7, -6], "size": [5, 5, 10]}],
+      "actors": [{"who": "marshal", "at": [0, -5], "face": 0, "do": "stand"}, {"who": "stranger", "at": [0, 7], "face": 180, "do": "stand"}],
+      "camera": {"on": "marshal", "size": "MS", "angle": "front34", "height": "low", "move": "push", "strength": 0.6}
+    },
+    {
+      "title": "Over the shoulder",
+      "seconds": 5,
+      "note": "Twenty paces of dust between them. The Stranger answers without moving.",
+      "dialogue": [["stranger", "Just passing through, Marshal."], ["marshal", "Then keep passing."]],
+      "sky": "#f2dcb5",
+      "ground": "#d9c29a",
+      "set": [
+        {"kind": "box", "at": [-7, -4], "size": [5, 6, 9]},
+        {"kind": "box", "at": [7, -6], "size": [5, 5, 10]},
+        {"kind": "box", "at": [-7, 8], "size": [5, 4.5, 9]},
+        {"kind": "box", "at": [7, 7], "size": [5, 6.5, 9]}
+      ],
+      "actors": [
+        {"who": "stranger", "at": [0, 7], "face": 180, "do": [[0, "stand+talk"], [2.5, "stand"]], "look": "marshal"},
+        {"who": "marshal", "at": [0, -5], "face": 0, "do": [[0, "stand"], [2.6, "stand+talk"]], "look": "stranger"}
+      ],
+      "camera": {"on": "stranger", "over": "marshal", "distance": 1.6}
+    },
+    {
+      "title": "The Stare",
+      "seconds": 3,
+      "note": "Close on the Stranger's face. Nobody blinks.",
+      "sky": "#f2dcb5",
+      "ground": "#d9c29a",
+      "actors": [{"who": "stranger", "at": [0, 7], "face": 180, "do": "stand"}],
+      "camera": {"on": "stranger", "size": "CU", "part": "face", "angle": "front", "height": "eye", "move": "push", "strength": 0.5}
+    },
+    {
+      "title": "Hands",
+      "seconds": 3,
+      "note": "The Marshal's hand hangs over the holster. The fingers twitch.",
+      "sky": "#f2dcb5",
+      "ground": "#d9c29a",
+      "actors": [{"who": "marshal", "at": [0, -5], "face": 0, "do": "stand"}],
+      "camera": {"on": "marshal", "size": "CU", "part": "hands", "angle": "side", "height": "eye"}
+    },
+    {
+      "title": "The Draw",
+      "seconds": 4,
+      "beats": [0.4, 1.2, 3.6],
+      "note": "Both draw at once. The Marshal is a heartbeat late and goes down in the dust.",
+      "sky": "#f2dcb5",
+      "ground": "#d9c29a",
+      "actors": [
+        {"who": "stranger", "at": [0, 7], "face": 180, "do": [[0, "stand"], [0.9, "reach"]]},
+        {"who": "marshal", "at": [0, -5], "face": 0, "do": [[0, "stand"], [1.0, "reach"], [1.5, "kneel"], [2.3, "lie"]]}
+      ],
+      "camera": {"from": [10, 1.1, 1], "look": [0, 1.0, 1], "fov": 50}
+    },
+    {
+      "title": "Walking out",
+      "seconds": 8,
+      "note": "The Stranger turns and walks back the way he came. The camera cranes up over the town.",
+      "sky": "#f2dcb5",
+      "ground": "#d9c29a",
+      "set": [
+        {"kind": "box", "at": [-7, -4], "size": [5, 6, 9]},
+        {"kind": "box", "at": [-7, 8], "size": [5, 4.5, 9]},
+        {"kind": "box", "at": [-7, 20], "size": [5, 7, 10]},
+        {"kind": "box", "at": [7, -6], "size": [5, 5, 10]},
+        {"kind": "box", "at": [7, 7], "size": [5, 6.5, 9]},
+        {"kind": "box", "at": [7, 19], "size": [5, 4, 10]}
+      ],
+      "actors": [
+        {"who": "stranger", "path": [[0, 0, 7], [1, 0, 7], [8, 0, 16.5]], "do": [[0, "stand"], [1, "walk"]]},
+        {"who": "marshal", "at": [0, -5], "face": 0, "do": "lie"}
+      ],
+      "camera": {"on": "stranger", "size": "WS", "angle": "back", "height": "high", "move": "crane-up", "strength": 1.5}
+    }
+  ]
+}
